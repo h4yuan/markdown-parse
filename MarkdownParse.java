@@ -23,6 +23,9 @@ public class MarkdownParse {
                 || (openParen != nextCloseBracket + 1)){
                 validLink = false;
             }
+            if (markdown.substring(openParen + 1, closeParen).contains(" ")){
+                validLink = false;
+            }
             if(validLink) {
                 toReturn.add(markdown.substring(openParen + 1, closeParen));
             }
