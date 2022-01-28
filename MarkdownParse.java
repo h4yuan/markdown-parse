@@ -4,8 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-// having expected output for imageTest.md noLinkFile.md in this version
-// but can't get expected output for test-file8.md
+// Getting expected output for imageTest.md noLinkFile.md and test-file8.md in this version
 public class MarkdownParse {
     public static ArrayList<String> getLinks(String markdown) {
         ArrayList<String> toReturn = new ArrayList<>();
@@ -22,7 +21,10 @@ public class MarkdownParse {
                 return toReturn;
             }
             if((nextOpenBracket != 0  && markdown.charAt(nextOpenBracket - 1) == '!')
-            || (openParen != nextCloseBracket + 1)){
+                || (openParen != nextCloseBracket + 1)){
+                validLink = false;
+            }
+            if(markdown.substring(openParen, closeParen).contains(" ")){
                 validLink = false;
             }
             if(validLink) {
