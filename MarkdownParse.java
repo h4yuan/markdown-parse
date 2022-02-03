@@ -3,38 +3,64 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Stack;
 
-// Getting expected output for imageTest.md noLinkFile.md and test-file8.md in this version
 public class MarkdownParse {
     public static ArrayList<String> getLinks(String markdown) {
         ArrayList<String> toReturn = new ArrayList<>();
-        // find the next [, then find the ], then find the (, then take up to
-        // the next )
+        
         int currentIndex = 0;
-        boolean validLink = true;
+        Stack<Character> bracketTracker = new Stack<>(); 
+        boolean findLink = false;
+        int start = 0;
+        int end = 0;
         while(currentIndex < markdown.length()) {
-            int nextOpenBracket = markdown.indexOf("[", currentIndex);
-            int nextCloseBracket = markdown.indexOf("]", nextOpenBracket);
-            int openParen = markdown.indexOf("(", nextCloseBracket);
-            int closeParen = markdown.indexOf(")", openParen);
-            if(nextOpenBracket == -1 || nextCloseBracket == -1 || openParen == -1 || closeParen == -1){
-                return toReturn;
+            char curr = markdown.charAt(currentIndex);
+            //if an escape char is found, skip it and the 
+            //character it is escaping
+            if (curr == '\\') {
+                currentIndex += 2;
+                continue;
             }
-            if((nextOpenBracket != 0  && markdown.charAt(nextOpenBracket - 1) == '!')
-                || (openParen != nextCloseBracket + 1)){
-                validLink = false;
+            //if we are potentially looking at a link with []
+            if (findLink) {
+                // if there arent any other brackets on the bracket tracker
+                if (bracketTracker.isEmpty()) {
+                    if (curr == '(') {
+                        bracketTracker.push(curr);
+                        start = currentIndex;
+                    } else { //something else came after the ] that wasn't (
+                        findLink = false;
+                    }
+                } else {
+                    if (curr == ')') {
+                        end = currentIndex;
+                        toReturn.add(markdown.substring(start + 1, end));
+                        bracketTracker.pop();
+                        findLink = false;
+                    }
+                }
+            } else {
+                if (curr == '[') {
+                    bracketTracker.push(curr);
+                } else if (curr == ']') {
+                    if (!bracketTracker.isEmpty()) {
+                        bracketTracker.clear();
+                        findLink = true;
+                    }
+                } else if (curr == '!') {
+                    if (currentIndex < markdown.length() - 1 && markdown.charAt(currentIndex + 1) == '[') {
+                        currentIndex += 2;
+                    }
+                }
             }
-            if(markdown.substring(openParen, closeParen).contains(" ")){
-                validLink = false;
-            }
-            if(validLink) {
-                toReturn.add(markdown.substring(openParen + 1, closeParen));
-            }
-            currentIndex = closeParen + 1;
-            }
-            return toReturn;
+            // move to next char
+            currentIndex++;
         }
-    
+
+        return toReturn;
+
+    }
     public static void main(String[] args) throws IOException {
 		Path fileName = Path.of(args[0]);
 	    String contents = Files.readString(fileName);
