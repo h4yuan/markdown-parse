@@ -21,7 +21,7 @@ public class MarkdownParseTest {
         assertEquals(2, 1 + 1);
     }
 
-    /*@Test
+    @Test
     public void TestOne() throws IOException, NoSuchFileException {
         //passes if running Markdown parse returns the correct text for "test-file.md"
         List<String> correctOutput = List.of("https://something.com","some-page.html");
@@ -67,7 +67,7 @@ public class MarkdownParseTest {
         // run getLinks on the contents of the file
         ArrayList<String> links = MarkdownParse.getLinks(contents);
         assertEquals(correctOutput,links);
-    }*/
+    }
 }
 
 
