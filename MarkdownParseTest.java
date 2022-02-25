@@ -23,6 +23,11 @@ public class MarkdownParseTest {
     }
 
     @Test
+    public void testVim() {
+    	assertEquals(1+1,2);
+    }
+
+    @Test
     public void TestOne() throws IOException, NoSuchFileException {
         //passes if running Markdown parse returns the correct text for "test-file.md"
         List<String> correctOutput = List.of("https://something.com","some-page.html");
@@ -82,6 +87,41 @@ public class MarkdownParseTest {
         assertEquals(correctOutput,links);
     }
 
+    @Test
+    public void testSnippet1() throws IOException, NoSuchFileException {
+        //passes if running Markdown parse returns the correct text for "test-file.md"
+        List<String> correctOutput = List.of("`google.com", "google.com","ucsd.edu");
+        Path fileName = Path.of("snippet1.md");
+        // read the file contents into a string
+        String contents = Files.readString(fileName);
+        // run getLinks on the contents of the file
+        ArrayList<String> links = MarkdownParse.getLinks(contents);
+        assertEquals(correctOutput,links);
+    }
+
+    @Test
+    public void testSnippet2() throws IOException, NoSuchFileException {
+        //passes if running Markdown parse returns the correct text for "test-file.md"
+        List<String> correctOutput = List.of("a.com","a.com(())","example.com");
+        Path fileName = Path.of("snippet2.md");
+        // read the file contents into a string
+        String contents = Files.readString(fileName);
+        // run getLinks on the contents of the file
+        ArrayList<String> links = MarkdownParse.getLinks(contents);
+        assertEquals(correctOutput,links);
+    }
+    
+    @Test
+    public void testSnippet3() throws IOException, NoSuchFileException {
+        //passes if running Markdown parse returns the correct text for "test-file.md"
+        List<String> correctOutput = List.of("https://www.twitter.com","https://ucsd-cse15l-w22.github.io/","https://cse.ucsd.edu/");
+        Path fileName = Path.of("snippet3.md");
+        // read the file contents into a string
+        String contents = Files.readString(fileName);
+        // run getLinks on the contents of the file
+        ArrayList<String> links = MarkdownParse.getLinks(contents);
+        assertEquals(correctOutput,links);
+    }
 }
 
 
